@@ -1,7 +1,8 @@
 from circleshape import CircleShape
-from constants import ASTEROID_MIN_RADIUS
+from constants import ASTEROID_MIN_RADIUS, SCORE_INCREMENT
 import pygame
 import random
+from score import Score
 
 class Asteroid(CircleShape):
     containers = None
@@ -16,6 +17,8 @@ class Asteroid(CircleShape):
 
     def split(self):
         self.kill()
+        Score.game_score += SCORE_INCREMENT
+        print(f"New game score: {Score.game_score}")
         if self.radius == ASTEROID_MIN_RADIUS:
             return
         else:
