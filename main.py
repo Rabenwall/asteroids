@@ -38,7 +38,7 @@ def main():
                 return
             for actual_shot in shots:
                 if actual_asteroid.collidesWith(actual_shot):
-                    actual_asteroid.kill()
+                    actual_asteroid.split()
                     actual_shot.kill()
                     break
         for to_draw in drawable:
