@@ -65,7 +65,7 @@ class Player(CircleShape):
         angle_diff = 360 / SHOT_RH_COUNT
         shot_angle = self.rotation + angle_diff / 2
         for i in range(SHOT_RH_COUNT):
-            shot = Shot(self.position.x, self.position.y, SHOT_RADIUS * 3)
+            shot = Shot(self.position.x, self.position.y, SHOT_RADIUS * 3, "red")
             shot.velocity = pygame.Vector2(0, 1).rotate(shot_angle) * PLAYER_SHOOT_SPEED * 0.5
             shot_angle += angle_diff
         self.shot_timer = PLAYER_SHOOT_COOLDOWN
