@@ -1,7 +1,9 @@
 from circleshape import CircleShape
-from constants import PLAYER_RADIUS, PLAYER_TURN_SPEED, PLAYER_SPEED, PLAYER_SHOOT_SPEED, PLAYER_SHOOT_COOLDOWN
+from constants import PLAYER_RADIUS, PLAYER_TURN_SPEED, PLAYER_SPEED, PLAYER_SHOOT_SPEED, PLAYER_SHOOT_COOLDOWN, SHOT_RADIUS, SHOT_RH_COUNT, SHOT_RH_ACTIVATE_COUNT
+from constants import SHOT_RADIUS, SHOT_RH_COUNT, SHOT_RH_ACTIVATE_COUNT
 import pygame
 from shot import Shot
+import random
 
 class Player(CircleShape):
     containers = None
@@ -9,6 +11,7 @@ class Player(CircleShape):
         super().__init__(x, y, PLAYER_RADIUS)
         self.rotation = 0
         self.shot_timer = 0
+        self.shot_count = 0
 
     def triangle(self):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
@@ -31,6 +34,7 @@ class Player(CircleShape):
     def update(self, dt):
         if self.shot_timer > 0:
             self.shot_timer -= dt
+        random_angle = random.uniform(20.0, 50.0)
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_a]:
@@ -43,12 +47,26 @@ class Player(CircleShape):
             self.move(dt * -1)
         if keys[pygame.K_SPACE]:
             if self.shot_timer <= 0:
-                self.shoot()
+                if self.shot_count == SHOT_RH_ACTIVATE_COUNT:
+                    self.roundhouse_shot()
+                    self.shot_count = 0
+                else:
+                    self.shoot()
 
 
     def shoot(self):
         shot = Shot(self.position.x, self.position.y)
         shot.velocity = pygame.Vector2(0, 1)
         shot.velocity = pygame.Vector2(0, 1).rotate(self.rotation) * PLAYER_SHOOT_SPEED
+        self.shot_timer = PLAYER_SHOOT_COOLDOWN
+        self.shot_count += 1
+
+    def roundhouse_shot(self):
+        angle_diff = 360 / SHOT_RH_COUNT
+        shot_angle = self.rotation + angle_diff / 2
+        for i in range(SHOT_RH_COUNT):
+            shot = Shot(self.position.x, self.position.y, SHOT_RADIUS * 3)
+            shot.velocity = pygame.Vector2(0, 1).rotate(shot_angle) * PLAYER_SHOOT_SPEED * 0.5
+            shot_angle += angle_diff
         self.shot_timer = PLAYER_SHOOT_COOLDOWN
         
